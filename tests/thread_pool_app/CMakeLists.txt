@@ -1,0 +1,3 @@
+add_executable(thread_pool_app main.cpp)
+
+target_link_libraries(thread_pool_app PRIVATE thread_pool)
