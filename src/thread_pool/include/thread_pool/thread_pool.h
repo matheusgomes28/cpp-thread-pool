@@ -1,4 +1,7 @@
 #ifndef THREAD_POOL_H
+#define THREAD_POOL_H
+
+#include <thread_safe_queue/thread_safe_queue.h>
 
 #include <functional>
 #include <string>
@@ -42,9 +45,7 @@ namespace thread_pool
         bool push(Task const& task);
     
     private:
-        std::queue<Task> _unsafe_queue;
-        std::condition_variable _queue_cv;
-        std::mutex _queue_m;
+        TsQueue<Task> _queue;
         std::vector<std::jthread> _threads;
     };
 } // namespace thread_pool

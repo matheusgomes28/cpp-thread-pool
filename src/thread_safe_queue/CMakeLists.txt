@@ -1,0 +1,2 @@
+add_library(thread_safe_queue INTERFACE)
+target_include_directories(thread_safe_queue INTERFACE include)

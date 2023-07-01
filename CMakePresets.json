@@ -51,7 +51,7 @@
             "binaryDir": "${sourceDir}/build/unix-deb",
             "inherits": ["unix", "deb"],
             "cacheVariables": {
-                "CMAKE_CXX_FLAGS": "-O0 --coverage -g",
+                "CMAKE_CXX_FLAGS": "-O0 -g -fsanitize=thread",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/unix-deb/install"
             }
         },

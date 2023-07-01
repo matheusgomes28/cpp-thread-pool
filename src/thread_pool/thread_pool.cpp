@@ -8,12 +8,7 @@ thread_pool::ThreadPool::ThreadPool(std::size_t n_threads)
             [&](){
                 while (true)
                 {
-                    std::unique_lock<std::mutex> cv_lock{ _queue_m };
-                    _queue_cv.wait(cv_lock, [&]{ return !_unsafe_queue.empty(); });
-
-                    auto const elem = _unsafe_queue.front();
-                    _unsafe_queue.pop();
-                    //cv_lock.release();
+                    auto const elem = _queue.pop();
                     
                     // At this stage we don't really change the
                     // queue anymore so we can definitely let the
@@ -43,11 +38,6 @@ thread_pool::ThreadPool::~ThreadPool()
 
 bool thread_pool::ThreadPool::push(Task const& task)
 {
-    { // stack for pushing to the queue & acquiring lock
-        std::lock_guard<std::mutex> cv_lock{ _queue_m };
-        _unsafe_queue.push(task);
-    }
-
-    _queue_cv.notify_one();
+    _queue.push(task);
     return true;
 }

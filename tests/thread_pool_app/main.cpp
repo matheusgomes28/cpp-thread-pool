@@ -9,58 +9,29 @@ using thread_pool::Task;
 using thread_pool::TaskType;
 using thread_pool::ThreadPool;
 
+Task make_mock_task(std::mutex& m, int i)
+{
+    Task const my_task1{
+        TaskType::Execute,
+        [&m, i](std::vector<Param> const&){
+            {
+                std::lock_guard cout_guard{m};
+                std::cout << "Hi from thread " << std::this_thread::get_id()
+                          << " request " << i << '\n';
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds{250});
+        },
+        {}
+    };
+
+    return my_task1;
+}
+
 int main(int argc, char** argv)
 {
     ThreadPool my_pool{4};
 
     std::mutex iostream_m;
-    Task const my_task1{
-        TaskType::Execute,
-        [&](std::vector<Param> const&){
-            {
-                std::lock_guard cout_guard{iostream_m};
-                std::cout << "Hi from thread 1\n";
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds{250});
-        },
-        {}
-    };
-    Task const my_task2{
-        TaskType::Execute,
-        [&](std::vector<Param> const&){
-            {
-                std::lock_guard cout_guard{iostream_m};
-                std::cout << "Hi from thread 2\n";
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds{250});
-        },
-        {}
-    };
-    Task const my_task3{
-        TaskType::Execute,
-        [&](std::vector<Param> const&){
-            {
-                std::lock_guard cout_guard{iostream_m};
-                std::cout << "Hi from thread 3\n";
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds{250});
-        },
-        {}
-    };
-    Task const my_task4{
-        TaskType::Execute,
-        [&](std::vector<Param> const&){
-            {
-                std::lock_guard cout_guard{iostream_m};
-                std::cout << "Hi from thread 4\n";
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds{250});
-        },
-        {}
-    };
 
-    for (int i = 0; i < 10; ++i) { my_pool.push(my_task1); }
-    for (int i = 0; i < 10; ++i) { my_pool.push(my_task2); }
-    for (int i = 0; i < 10; ++i) { my_pool.push(my_task3); }
-    for (int i = 0; i < 10; ++i) { my_pool.push(my_task4); }
+    for (int i = 0; i < 100; ++i) my_pool.push(make_mock_task(iostream_m, i));
 }

@@ -7,5 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS Off)
 
 
+add_subdirectory(src/thread_safe_queue)
 add_subdirectory(src/thread_pool)
 add_subdirectory(tests/thread_pool_app)
