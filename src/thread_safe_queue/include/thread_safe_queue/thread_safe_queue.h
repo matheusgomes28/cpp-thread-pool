@@ -12,11 +12,8 @@ namespace thread_pool
     public:
         void push(T const& val)
         {
-            {
-                std::lock_guard<std::mutex> queue_lock{_queue_mutex};
-                _queue.push(val);
-            }
-
+            std::lock_guard<std::mutex> queue_lock{_queue_mutex};
+            _queue.push(val);
             _queue_cv.notify_one();
         }
 
